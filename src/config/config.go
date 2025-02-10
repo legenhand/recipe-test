@@ -11,14 +11,18 @@ import (
 var Cfg *Config
 
 type Config struct {
-	ServerPort string
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
-	JWTSecret  string
-	BaseUrl    string
+	ServerPort   string
+	DBHost       string
+	DBPort       int
+	DBUser       string
+	DBPassword   string
+	DBName       string
+	JWTSecret    string
+	BaseUrl      string
+	SmtpHost     string
+	SmtpPort     string
+	SmtpUser     string
+	SmtpPassword string
 }
 
 func LoadConfig() {
@@ -32,14 +36,18 @@ func LoadConfig() {
 	}
 
 	Cfg = &Config{
-		ServerPort: getEnv("SERVER_PORT", "8080"),
-		DBHost:     os.Getenv("DB_HOST"),
-		DBPort:     port,
-		DBUser:     os.Getenv("DB_USER"),
-		DBPassword: os.Getenv("DB_PASSWORD"),
-		DBName:     os.Getenv("DB_NAME"),
-		JWTSecret:  getEnv("JWT_SECRET", "secret"),
-		BaseUrl:    getEnv("BASE_URL", "http://localhost:8080"),
+		ServerPort:   getEnv("SERVER_PORT", "8080"),
+		DBHost:       os.Getenv("DB_HOST"),
+		DBPort:       port,
+		DBUser:       os.Getenv("DB_USER"),
+		DBPassword:   os.Getenv("DB_PASSWORD"),
+		DBName:       os.Getenv("DB_NAME"),
+		JWTSecret:    getEnv("JWT_SECRET", "secret"),
+		BaseUrl:      getEnv("BASE_URL", "http://localhost:8080"),
+		SmtpHost:     getEnv("SMTP_HOST", "smtp.gmail.com"),
+		SmtpPort:     getEnv("SMTP_PORT", "587"),
+		SmtpUser:     getEnv("SMTP_USER", "your@email.com"),
+		SmtpPassword: getEnv("SMTP_PASSWORD", "yourpassword"),
 	}
 }
 

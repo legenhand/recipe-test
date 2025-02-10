@@ -13,6 +13,7 @@ import (
 	"github.com/legenhand/recipe-test/src/model"
 	"log"
 	"net/http"
+	"net/smtp"
 	"strconv"
 	"strings"
 	"time"
@@ -33,6 +34,15 @@ func SubmitEmail(c *gin.Context) {
 	}
 
 	magicLinkURL := fmt.Sprintf("%s/auth/magic-link?token=%s", config.Cfg.BaseUrl, tokenString)
+
+	subject := "Your Magic Link"
+	body := fmt.Sprintf("Click the following link to log in: \n %s", magicLinkURL)
+
+	err = sendEmail(payload.Email, subject, body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send magic link email"})
+		return
+	}
 
 	log.Printf("Send magic link to %s: %s", payload.Email, magicLinkURL)
 
@@ -130,4 +140,25 @@ func ValidateMagicLinkToken(tokenString string) (string, error) {
 	}
 
 	return email, nil
+}
+
+func sendEmail(to string, subject string, body string) error {
+	cfg := config.Cfg
+	from := cfg.SmtpUser
+	password := cfg.SmtpPassword
+	smtpServer := cfg.SmtpHost
+	smtpPort := cfg.SmtpPort
+
+	auth := smtp.PlainAuth("", from, password, smtpServer)
+
+	message := []byte(fmt.Sprintf("Subject: %s\r\n\r\n%s", subject, body))
+
+	err := smtp.SendMail(smtpServer+":"+smtpPort, auth, from, []string{to}, message)
+	if err != nil {
+		log.Printf("Failed to send email: %v", err)
+		return err
+	}
+
+	log.Printf("Email sent to %s", to)
+	return nil
 }
