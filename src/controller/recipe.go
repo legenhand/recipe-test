@@ -79,13 +79,6 @@ func CreateRecipe(c *gin.Context) {
 		costPerUnit := inventory.Price / inventory.Qty
 		totalCOGS += (ingredient.Quantity * costPerUnit) / conversionFactor
 
-		fmt.Println("Inventory:", inventory.Name)
-		fmt.Println("Price per unit:", inventory.Price)
-		fmt.Println("Quantity:", inventory.Qty)
-		fmt.Println("Cost per unit:", costPerUnit)
-		fmt.Println("conversionFactor:", conversionFactor)
-		fmt.Println("Calculated COGS:", (ingredient.Quantity/conversionFactor)*costPerUnit)
-
 		recipeIngredient := model.RecipeIngredient{
 			ID:          uuid.New(),
 			RecipeID:    uuid.New(),
@@ -116,7 +109,7 @@ func CreateRecipe(c *gin.Context) {
 	}
 
 	var recipeWithIngredients model.Recipe
-	if err := db.DB.Preload("Ingredients.Unit").First(&recipeWithIngredients, recipe.ID).Error; err != nil {
+	if err := db.DB.Preload("Ingredients.Unit").Preload("Ingredients.Inventory").Preload("Ingredients.Inventory.Unit").First(&recipeWithIngredients, recipe.ID).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load ingredients"})
 		return
 	}
