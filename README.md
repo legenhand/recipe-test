@@ -71,7 +71,7 @@ project-root/
    DB_NAME=your_database_name
    JWT_SECRET=your_jwt_secret
    BASE_URL=http://localhost:8080
-```
+   ```
 
 ## Database Setup, Migrations and Seeding
 you can run this command to run postgresql in docker
